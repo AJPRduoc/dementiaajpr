@@ -25,7 +25,7 @@ const STORAGE_KEYS = {
 const FOUR_HOURS_MS = 4 * 60 * 60 * 1000;
 
 /* -----------------------------
-   Función para leer imagen
+   TEST Función para leer imagen
 ------------------------------ */
 function readAsDataURL(file) {
   return new Promise((resolve, reject) => {

@@ -1,0 +1,74 @@
+/* ----- RESET BÁSICO DE PÁGINA ----- */
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}
+body {
+  margin: 0;               /* quita márgenes del body */
+}
+html {
+  overflow-x: hidden;      /* evita scroll lateral por componentes con 100vw */
+}
+
+/* ----- CONTENEDORES BOOTSTRAP A PANTALLA COMPLETA ----- */
+/* Quita padding lateral del container fluido (a veces deja “franjas”) */
+.container-fluid {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Por si alguna fila no lleva gx-0, garantizamos cero gutters horizontales */
+.row {
+  --bs-gutter-x: 0 !important;
+}
+
+/* Columnas sin padding lateral (mantiene el look de tus Cards) */
+[class*="col-"], [class^="col"] {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Asegura que el contenedor principal realmente ocupe la altura de la ventana */
+.vh-100,
+.min-vh-100 {
+  min-height: 100vh !important;
+}
+
+/* ----- TARJETAS QUE ESTIREN A TODO EL ALTO DISPONIBLE ----- */
+.app-card {
+  height: 100%;
+  border-radius: 0; /* opcional: bordes cuadrados si quieres continuidad al borde */
+}
+
+/* Scrolling suave dentro del panel de historial */
+.session-list {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ----- INPUT DE ARCHIVO: ESTILO DEL BOTÓN (SIN MOSTRAR NOMBRE) ----- */
+/* No ocultamos el control; solo estilizamos el botón del file-picker. 
+   Tu JS limpia el value, por lo que el nombre no queda visible. */
+input[type="file"]::file-selector-button {
+  border: 1px solid rgba(13,110,253,.5);
+  padding: .375rem .75rem;
+  border-radius: .375rem;
+  background: transparent;
+  cursor: pointer;
+}
+input[type="file"]::file-selector-button:hover {
+  background: rgba(13,110,253,.06);
+}
+
+/* Mensaje pequeño junto al botón del file */
+.file-hint {
+  font-size: .875rem;
+  color: #6c757d;
+}
+
+/* ----- AJUSTES MENORES RESPONSIVE ----- */
+@media (max-width: 767.98px) {
+  .card-body {
+    padding: 1.25rem !important;
+  }
+}

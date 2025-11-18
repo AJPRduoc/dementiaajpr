@@ -1,0 +1,64 @@
+name: Build & Deploy FrontEnd to EC2
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "FrontEnd/**"
+      - ".github/workflows/deploy-frontend.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: frontendDementaiAi
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Prepare SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${EC2_SSH_KEY}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "$EC2_HOST" >> ~/.ssh/known_hosts
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+
+      - name: Upload frontend to EC2
+        run: |
+          tar -czvf frontend.tar.gz FrontEnd/
+          scp -i ~/.ssh/id_ed25519 frontend.tar.gz $EC2_USER@$EC2_HOST:/tmp/frontend.tar.gz
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+
+      - name: Deploy frontend container
+        run: |
+          ssh -i ~/.ssh/id_ed25519 $EC2_USER@$EC2_HOST << 'EOF'
+
+          echo "==> Extracting frontend"
+          rm -rf ~/frontend
+          mkdir -p ~/frontend
+          tar -xzvf /tmp/frontend.tar.gz -C ~/frontend
+
+          cd ~/frontend/FrontEnd
+
+          echo "==> Building frontend Docker image"
+          docker build -t dementia-frontend .
+
+          echo "==> Stopping old frontend container"
+          docker stop dementia-front || true
+          docker rm dementia-front || true
+
+          echo "==> Running new frontend container"
+          docker run -d \
+            --name dementia-front \
+            -p 80:80 \
+            dementia-frontend
+
+          EOF
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}

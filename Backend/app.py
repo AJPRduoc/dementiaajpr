@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# Permitir todos los orígenes (para desarrollo)
+#  todos los orígenes (para desarrollo)
 origins = ["*"]  # ⚠️ en producción restringe a tu frontend real
 
 app.add_middleware(
